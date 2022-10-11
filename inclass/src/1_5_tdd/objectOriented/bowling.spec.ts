@@ -8,6 +8,7 @@ describe('A bowling game', () => {
     game = new BowlingGame()
   });
 
+
   it('can roll a ball', () => {
     game = game.roll(0);
   })

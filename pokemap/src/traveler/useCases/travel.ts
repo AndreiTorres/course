@@ -5,7 +5,11 @@ import { getRandomInt } from '../utils/math.utils'
 import { Pokemon } from '../../pokemon'
 import { GarchompMock } from '../dtos/mock'
 import { ZoneFinder } from '../interfaces/ZoneFinder'
+<<<<<<< HEAD
 import { generateRandomPokemon } from './pokeom'
+=======
+import { generateRandomPokemon } from './pokemon'
+>>>>>>> 1792ff998b386a1fab0261ff86379c70c9c5dd01
 
 export default class Traveler {
   constructor(private zoneFinder: ZoneFinder) {}

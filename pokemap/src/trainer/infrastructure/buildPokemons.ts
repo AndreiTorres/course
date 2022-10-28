@@ -1,20 +1,16 @@
-<<<<<<< HEAD
-import { runQuery } from 'src/db'
-=======
+import { BuildPokemons } from '../interfaces/BuildPokemons'
 import { runQuery } from '../../db'
->>>>>>> 1792ff998b386a1fab0261ff86379c70c9c5dd01
 import {
   buildPokemon,
   Gender,
   Move,
   Pokemon,
   PokemonBaseData,
-<<<<<<< HEAD
+  PokemonBuilder,
   PokemonMoves,
-} from 'src/pokemon'
-import { GarchompMock } from '../dtos/mock'
+} from '../../pokemon'
 
-export const getPokemons = async (userId: number): Promise<Pokemon[]> => {
+export const buildPokemons: BuildPokemons = async (userId: number) => {
   const dbRes = await getPokemonsFromDB(userId)
   const pokemons = await mapToPokemons(dbRes)
 
@@ -30,7 +26,12 @@ const mapToPokemons = async (dbRes: any[]): Promise<Pokemon[]> => {
 }
 
 const mapToPokemon = (row: any): Promise<Pokemon> => {
-  return Promise.resolve(GarchompMock) /// ==============================
+  const builder: PokemonBuilder = {
+    buildBaseData: () => buildBaseData(row),
+    buildMoves: async (moves: Move[]) => buildPokemonMoves(row.pc_id, moves),
+    buildStats: async () => buildPokemonStats(row.pc_id),
+  }
+  return buildPokemon(row.id, builder)
 }
 
 const buildBaseData = (row: any): Promise<PokemonBaseData> =>
@@ -46,9 +47,9 @@ const buildPokemonMoves = async (
 ): Promise<PokemonMoves> => {
   const { results } = await runQuery(
     `
-      SELECT * FROM pokemon_pc_moves
-      where pokemon_pc_moves.pc_id = $pcId
-    `,
+        SELECT * FROM pokemon_pc_moves
+        where pokemon_pc_moves.pc_id = $pcId
+      `,
     { pcId }
   )
 
@@ -64,9 +65,9 @@ const buildPokemonMoves = async (
 const buildPokemonStats = async (pcId: number) => {
   const { results } = await runQuery(
     `
-      SELECT * FROM pokemon_pc_stats
-      where pokemon_pc_stats.pc_id = $pcId
-    `,
+        SELECT * FROM pokemon_pc_stats
+        where pokemon_pc_stats.pc_id = $pcId
+      `,
     { pcId }
   )
 
@@ -101,27 +102,12 @@ const buildPokemonStats = async (pcId: number) => {
 const getPokemonsFromDB = async (userId: number) => {
   const res = await runQuery(
     `
-    SELECT * FROM pokemon_pc
-    left join pokemon_pc_stats on pokemon_pc_stats.pc_id = pokemon_pc.pc_id
-    where pokemon_pc.user_id = $userId;
-  `,
+      SELECT * FROM pokemon_pc
+      left join pokemon_pc_stats on pokemon_pc_stats.pc_id = pokemon_pc.pc_id
+      where pokemon_pc.user_id = $userId;
+    `,
     { userId }
   )
 
   return res.results
 }
-=======
-  PokemonBuilder,
-  PokemonMoves,
-} from '../../pokemon'
-import { GarchompMock } from '../dtos/mock'
-import { BuildPokemons } from '../interfaces/BuildPokemons'
-
-export const makeGetPokemons =
-  (buildPokemons: BuildPokemons) =>
-  async (userId: number): Promise<Pokemon[]> => {
-    const pokemons = await buildPokemons(userId)
-
-    return pokemons
-  }
->>>>>>> 1792ff998b386a1fab0261ff86379c70c9c5dd01
